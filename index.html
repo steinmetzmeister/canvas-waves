@@ -1,2 +1,44 @@
+<style>
+body { padding: 0px; margin: 0px; }
+#canvas { width: 100%; height: 100%; }
+</style>
+<canvas id="canvas" style=""></canvas>
+
+
 <script src="./js/waves.js"></script>
-<h1>canvas-waves</h1>
+<script>
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+ctx.fillStyle = "rgba(0, 0, 0, 1)";
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+function animate()
+{
+    requestAnimationFrame(animate);
+    render();
+}
+
+function render()
+{
+    ctx.fillStyle = "#333";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (var i = 0; i < waves.length; i++)
+        waves[i].display();
+}
+
+var waves = [];
+waves.push(new Wave);
+waves.push(new Wave);
+waves.push(new Wave);
+animate();
+
+document.getElementById('canvas').addEventListener('click', function() {
+    for (var i = 0; i < waves.length; i++)
+        waves[i].shuffle();
+});
+</script>
