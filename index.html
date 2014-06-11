@@ -32,9 +32,9 @@ function render()
 }
 
 var waves = [];
-waves.push(new Wave);
-waves.push(new Wave);
-waves.push(new Wave);
+for (var i = 0; i < 5; i++)
+    waves.push(new Wave);
+
 animate();
 
 document.getElementById('canvas').addEventListener('click', function() {
