@@ -71,8 +71,6 @@ function animate() {
     camera.position.x = Math.sin(angle) * 256;
     camera.position.z = Math.cos(angle) * 256;
 
-    camera.position.y = Math.sin(angle * 4) * 256;
-
     requestAnimationFrame( animate );
 
     for (var i = 0; i < meshes.length; i++)
