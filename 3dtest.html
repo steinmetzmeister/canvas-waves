@@ -47,18 +47,18 @@ function init() {
     scene = new THREE.Scene();
 
     mats.push(new THREE.MeshBasicMaterial({ color: 0xFF0000, wireframe: true }));
-    mats.push(new THREE.MeshBasicMaterial({ color: "lightgreen", wireframe: true }))
-    mats.push(new THREE.MeshBasicMaterial({ color: "lightblue", wireframe: true }));
+    // mats.push(new THREE.MeshBasicMaterial({ color: "lightgreen", wireframe: true }))
+    // mats.push(new THREE.MeshBasicMaterial({ color: "lightblue", wireframe: true }));
 
-    for (var i = 0; i < 6; i++)
+    for (var i = 0; i < 5; i++)
     {
         speeds.push(Math.random() * 0.025);
 
         var j = Math.floor(Math.random() * (176 - 96)) + 96;
-        var k = Math.floor(Math.random() * mats.length);
+        // var k = Math.floor(Math.random() * mats.length);
         var geo = new THREE.BoxGeometry(j, j, j);
 
-        var mesh = new THREE.Mesh(geo, mats[k]);
+        var mesh = new THREE.Mesh(geo, mats[0]);
 
         mesh.rotation.x = Math.random();
         mesh.rotation.y = Math.random();
@@ -102,7 +102,7 @@ function animate() {
 
         meshes[i].material.color.setHex(Math.random() * 0xFFFFFF);
 
-        j = i + 4;
+        j = i + 8;
 
         meshes[i].scale.x = map(frequencyData[j], 0, 255, 0, 1);
         meshes[i].scale.y = map(frequencyData[j], 0, 255, 0, 1);
