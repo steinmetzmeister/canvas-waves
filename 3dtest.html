@@ -6,7 +6,7 @@ body { margin: 0px; padding: 0px; }
 <div id="container"></div>
 
 <audio id="audio" style="display: none;" autoplay>
-    <source src="http://dcstream1.somafm.com:7770/;" type="audio/mpeg">
+    <source src="http://173.201.191.13:8000/;" type="audio/mpeg">
     Your browser does not support the audio element.
 </audio>
 
@@ -50,19 +50,20 @@ function init() {
     // mats.push(new THREE.MeshBasicMaterial({ color: "lightgreen", wireframe: true }))
     // mats.push(new THREE.MeshBasicMaterial({ color: "lightblue", wireframe: true }));
 
-    for (var i = 0; i < 5; i++)
+    for (var i = 0; i < 10; i++)
     {
         speeds.push(Math.random() * 0.025);
 
-        var j = Math.floor(Math.random() * (176 - 96)) + 96;
+        var j = 128;
+        // var j = Math.floor(Math.random() * (176 - 96)) + 96;
         // var k = Math.floor(Math.random() * mats.length);
         var geo = new THREE.BoxGeometry(j, j, j);
 
         var mesh = new THREE.Mesh(geo, mats[0]);
 
-        mesh.rotation.x = Math.random();
-        mesh.rotation.y = Math.random();
-        mesh.rotation.z = Math.random();
+        // mesh.rotation.x = Math.random();
+        // mesh.rotation.y = Math.random();
+        // mesh.rotation.z = Math.random();
 
         meshes.push(mesh);
 
@@ -90,23 +91,29 @@ function animate() {
 
     angle += 0.01;
 
-    camera.position.x = Math.sin(angle) * 128;
-    camera.position.z = Math.cos(angle) * 128;
+    camera.position.x = Math.sin(angle) * 192;
+    camera.position.z = Math.cos(angle) * 192;
 
     requestAnimationFrame( animate );
 
     for (var i = 0; i < meshes.length; i++)
     {
+        if (i != 0 && i != meshes.length - 1)
+          continue;
+
+        if (i != meshes.length - 1)
+          continue;
+
         meshes[i].rotation.x += speeds[i];
         meshes[i].rotation.y += speeds[i];
 
         meshes[i].material.color.setHex(Math.random() * 0xFFFFFF);
 
-        j = i + 8;
+        var j = i;
 
-        meshes[i].scale.x = map(frequencyData[j], 0, 255, 0, 1);
-        meshes[i].scale.y = map(frequencyData[j], 0, 255, 0, 1);
-        meshes[i].scale.z = map(frequencyData[j], 0, 255, 0, 1);
+        meshes[i].scale.x = map(frequencyData[j], 0, 255, 0.01, 1);
+        meshes[i].scale.y = map(frequencyData[j], 0, 255, 0.01, 1);
+        meshes[i].scale.z = map(frequencyData[j], 0, 255, 0.01, 1);
     }
 
     renderer.render( scene, camera );
