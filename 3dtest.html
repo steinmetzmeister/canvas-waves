@@ -74,7 +74,10 @@ function init() {
     }
 
     window.addEventListener('resize', onWindowResize, false);
-
+    document.getElementById('container').addEventListener('click', function() {
+        audioEl.play();
+        console.log(12);
+    }, false);
 }
 
 function onWindowResize() {
