@@ -1,8 +1,29 @@
 <style>
 body { margin: 0px; padding: 0px; }
+#container { margin: 0px; padding: 0px; }
 </style>
 
 <div id="container"></div>
+
+<audio id="audio" style="display: none;" autoplay>
+    <source src="http://dcstream1.somafm.com:7770/;" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+<script type="text/javascript">
+var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+var audioEl = document.getElementById('audio');
+
+var source = audioCtx.createMediaElementSource(audioEl);
+var analyser = audioCtx.createAnalyser();
+
+source.connect(analyser);
+analyser.connect(audioCtx.destination);
+
+analyser.fftSize = 32;
+var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+</script>
 
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r67/three.min.js"></script>
 <script type="text/javascript">
@@ -29,7 +50,7 @@ function init() {
     mats.push(new THREE.MeshBasicMaterial({ color: "lightgreen", wireframe: true }))
     mats.push(new THREE.MeshBasicMaterial({ color: "lightblue", wireframe: true }));
 
-    for (var i = 0; i < 3; i++)
+    for (var i = 0; i < 32; i++)
     {
         speeds.push(Math.random() * 0.025);
 
@@ -38,7 +59,7 @@ function init() {
         var geo = new THREE.BoxGeometry(j, j, j);
 
         var mesh = new THREE.Mesh(geo, mats[k]);
-        
+
         mesh.rotation.x = Math.random();
         mesh.rotation.y = Math.random();
         mesh.rotation.z = Math.random();
@@ -63,6 +84,7 @@ function onWindowResize() {
 
 var angle = 0;
 function animate() {
+    analyser.getByteFrequencyData(frequencyData);
 
     camera.lookAt(new THREE.Vector3(0,0,0));
 
@@ -77,10 +99,18 @@ function animate() {
     {
         meshes[i].rotation.x += speeds[i];
         meshes[i].rotation.y += speeds[i];
-        meshes[i].material.color.setHex(Math.random() * 0xffffff);
+
+        meshes[i].material.color.setHex(Math.random() * 0xFFFFFF);
+
+        meshes[i].scale.x = map(frequencyData[i], 0, 255, 0, 1);
+        meshes[i].scale.y = map(frequencyData[i], 0, 255, 0, 1);
+        meshes[i].scale.z = map(frequencyData[i], 0, 255, 0, 1);
     }
 
     renderer.render( scene, camera );
+}
 
+function map(value, low1, high1, low2, high2) {
+    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
 </script>
