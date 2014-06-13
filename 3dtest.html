@@ -91,21 +91,18 @@ function animate() {
 
     angle += 0.01;
 
-    camera.position.x = Math.sin(angle) * 192;
-    camera.position.z = Math.cos(angle) * 192;
+    camera.position.x = Math.sin(angle) * 64;
+    camera.position.y = Math.cos(angle) * 64;
+    camera.position.z = Math.cos(angle) * 64;
+
+    meshes[meshes.length - 1].rotation.x = Math.sin(angle);
+    meshes[meshes.length - 1].rotation.y = Math.cos(angle);
+    meshes[meshes.length - 1].rotation.z = Math.cos(angle);
 
     requestAnimationFrame( animate );
 
     for (var i = 0; i < meshes.length; i++)
     {
-        if (i != 0 && i != meshes.length - 1)
-          continue;
-
-        if (i != meshes.length - 1)
-          continue;
-
-        meshes[i].rotation.x += speeds[i];
-        meshes[i].rotation.y += speeds[i];
 
         meshes[i].material.color.setHex(Math.random() * 0xFFFFFF);
 
