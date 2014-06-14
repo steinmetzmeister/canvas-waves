@@ -1,0 +1,103 @@
+<style>
+body { margin: 0px; padding: 0px; }
+</style>
+
+<audio id="audio" style="display: none;" autoplay>
+    <source src="http://xstream1.somafm.com:8900/;" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+<div id="container"></div>
+
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r67/three.min.js"></script>
+<script type="text/javascript" src="./js/util.js"></script>
+<script type="text/javascript" src="./js/visualizer.js"></script>
+<script type="text/javascript">
+var visualizer = new Visualizer('audio');
+// visualizer.setFft(64);
+
+var camera, scene, renderer;
+
+var meshes = [];
+var mats = [];
+
+init();
+animate();
+
+function init() {
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  document.getElementById('container').appendChild(renderer.domElement);
+
+  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
+  scene = new THREE.Scene();
+
+  // camera.position.z = 500;
+
+  var count = 21;
+  var rowSize = 7;
+  var y = -300;
+  var x = -450;
+
+  for (var i = 0; i < count; i++)
+  {
+    var geo = new THREE.BoxGeometry(100, 100, 100);
+    mats.push(new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true }));
+    meshes.push(new THREE.Mesh(geo, mats[i]));
+    scene.add(meshes[i]);
+
+    if (i % rowSize == 0)
+    {
+      x = -450;
+      y += 150;
+    }
+
+    meshes[i].position = new THREE.Vector3(x, y, 0);
+
+    x += 150;
+  }
+
+  window.addEventListener('resize', onWindowResize, false);
+}
+
+function onWindowResize() {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+}
+
+var angle = 0;
+var j = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  var data = visualizer.update();
+
+  var p = Util.map(data[64], 0, 255, 512, 100);
+
+  camera.position.z = Math.floor(p);
+
+  camera.lookAt(new THREE.Vector3(0, 0, 0));
+  camera.rotation.z = Math.sin(angle);
+
+  renderer.render(scene, camera);
+
+  for (var i = 0; i < meshes.length; i++)
+  {
+    var color = Util.rgbToHex(data[64 + i * 16], data[96 + i * 16], data[128 + i * 16]);
+    meshes[i].material.color.setHex(color);
+    meshes[i].position.z = Util.map(data[96 + i * 16], 0, 255, -100, 100);
+  }
+
+  j++;
+  if (j % 100 == 0)
+    console.log(data[6]);
+}
+
+function map(value, low1, high1, low2, high2) {
+    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+}
+</script>

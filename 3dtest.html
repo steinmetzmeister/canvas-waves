@@ -5,8 +5,8 @@ body { margin: 0px; padding: 0px; }
 
 <div id="container"></div>
 
-<audio id="audio" style="display: none;" autoplay>
-    <source src="http://173.201.191.13:8000/;" type="audio/mpeg">
+<audio id="audio" style="display: none;">
+    <source src="http://uwstream2.somafm.com:7770/;" type="audio/mpeg">
     Your browser does not support the audio element.
 </audio>
 
@@ -46,12 +46,14 @@ function init() {
 
     scene = new THREE.Scene();
 
-    mats.push(new THREE.MeshBasicMaterial({ color: 0xFFFFFF, wireframe: true }));
+
     mats.push(new THREE.MeshBasicMaterial({ color: 0x912CEE, wireframe: false }))
     // mats.push(new THREE.MeshBasicMaterial({ color: "lightblue", wireframe: true }));
 
-    for (var i = 0; i < 10; i++)
+    var totalBoxes = 8;
+    for (var i = 0; i < totalBoxes; i++)
     {
+        mats.push(new THREE.MeshBasicMaterial({ color: 0xFFFFFF, wireframe: true }));
         speeds.push(Math.random() * 0.025);
 
         var j = 128 - i * 10;
@@ -59,10 +61,11 @@ function init() {
         // var k = Math.floor(Math.random() * mats.length);
         var geo = new THREE.BoxGeometry(j, j, j);
 
-        if (i == 9)
-            var mesh = new THREE.Mesh(geo, mats[1]);
+        var mesh = null;
+        if (i == 0)
+            mesh = new THREE.Mesh(geo, mats[0]);
         else
-            var mesh = new THREE.Mesh(geo, mats[0]);
+            mesh = new THREE.Mesh(geo, mats[i + 1]);
 
         // mesh.rotation.x = Math.random();
         // mesh.rotation.y = Math.random();
@@ -109,12 +112,31 @@ function animate() {
 
     for (var i = 0; i < meshes.length; i++)
     {
-
-          meshes[i].material.color.setHex(Math.random() * 0xFFFFFF);
-
         var j = i;
 
         var k = map(frequencyData[j], 0, 255, 0.01, 1);
+        var m = map(frequencyData[j] * 05., 0, 255, 0.01, 3);
+        var c = map(Math.floor(frequencyData[j], 0, 255, 0, 15));
+
+        var fc = null;
+
+        if (m < 1)
+        {
+          fc = 0xFF0000;
+        }
+        else if (m < 2)
+        {
+          fc = 0x0000FF;
+        }
+        else if (m < 3)
+        {
+          fc = 0x00FF00;
+        }
+
+        if (i == meshes.length - 1)
+          meshes[i].material.color.setHex(Math.random() * 0xFFFFFF);
+        else
+          meshes[i].material.color.setHex(fc);
 
         meshes[i].scale.x = k;
         meshes[i].scale.y = k;
