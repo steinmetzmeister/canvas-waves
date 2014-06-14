@@ -47,7 +47,7 @@ function init() {
     scene = new THREE.Scene();
 
     mats.push(new THREE.MeshBasicMaterial({ color: 0xFFFFFF, wireframe: true }));
-    mats.push(new THREE.MeshBasicMaterial({ color: 0x912CEE, wireframe: false }))
+    mats.push(new THREE.MeshBasicMaterial({ color: 0x912CEE, wireframe: false, transparent: true, opacity: 0.8 }))
     // mats.push(new THREE.MeshBasicMaterial({ color: "lightblue", wireframe: true }));
 
     for (var i = 0; i < 10; i++)
@@ -86,7 +86,6 @@ function onWindowResize() {
     camera.updateProjectionMatrix();
 
     renderer.setSize(window.innerWidth, window.innerHeight);
-
 }
 
 var angle = 0;
