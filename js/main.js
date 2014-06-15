@@ -14,8 +14,7 @@ var Main = {
     this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
     this.scene = new THREE.Scene();
 
-    this.camera.position.z = 500;
-    this.camera.rotation.z = 45;
+    this.camera.position.z = 75;
   },
 
   animate: function() {
@@ -62,7 +61,7 @@ var CubeActor = function() {
   this.mats = [];
 
   var geo = new THREE.BoxGeometry(50, 50, 50);
-  this.mat = new THREE.MeshBasicMaterial({ color: 0x00FF00, transparent: true, opacity: 0.5 });
+  this.mat = new THREE.MeshBasicMaterial({ color: 0x00FF00, wireframe: true });
   this.mesh = new THREE.Mesh(geo, this.mat);
 
   Main.addToScene(this);
@@ -70,11 +69,13 @@ var CubeActor = function() {
 CubeActor.prototype = new Actor();
 CubeActor.prototype.constructor = CubeActor;
 CubeActor.prototype.update = function() {
-  var x = Math.abs(Main.camera.position.x) * 0.05;
+  var x = Math.abs(this.mesh.position.x) * Main.angle * 0.1;
+  var y = Math.abs(this.mesh.position.y) * Main.angle * 0.1;
+  var z = Math.abs(this.mesh.position.z) * Main.angle * 0.1;
   var a = noise.perlin3(
-    this.mesh.position.x * 0.01 + x, 
-    this.mesh.position.y * 0.01 + x, 
-    this.mesh.position.z * 0.01 + x);
+    x * 0.1, 
+    y * 0.1,
+    z * 0.1);
 
   this.setScale(Math.abs(a));
 }
