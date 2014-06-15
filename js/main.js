@@ -12,7 +12,7 @@ var Main = {
     console.log(container);
     document.getElementById(container).appendChild(this.renderer.domElement);
 
-    this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+    this.camera = new THREE.PerspectiveCamera(140, window.innerWidth / window.innerHeight, 1, 1000);
     this.scene = new THREE.Scene();
 
     this.camera.position.z = 75;
@@ -24,13 +24,17 @@ var Main = {
       Main.actors[i].update();
     Main.render();
 
-    Main.angle += 0.0025;
-    Main.camera.position.x = Math.sin(Main.angle) * 25;
-    Main.camera.position.y = Math.cos(Main.angle) * 25;
-    Main.camera.position.z = Math.cos(Main.angle) * 25;
-    Main.camera.lookAt(new THREE.Vector3(0, 12.5, 0));
+    Main.angle += 0.01;
 
     Main.visData = visualizer.update();
+
+    
+    Main.camera.position.z = Math.cos(Main.angle) * 32;
+    Main.camera.position.y = Math.cos(Main.angle) * 32;
+    if (Main.visData[2] > 150)
+      Main.camera.position.x = Math.sin(Main.angle) * Util.map(Main.visData[2], 0, 255, 0, 128)
+    
+    Main.camera.lookAt(new THREE.Vector3(0, 0, 0));
   },
 
   render: function() {
@@ -65,12 +69,18 @@ var CubeActor = function() {
 
   var geo = new THREE.BoxGeometry(50, 50, 50);
 
+  var c = 0x00FF00;
   if (Math.random() < 0.5)
-    var c = 0x00EE00;
+  {  
+    this.flag = false;
+    this.mat = new THREE.MeshBasicMaterial({ color: c, opacity: 0.25, transparent: true });
+  }
   else
-    var c = 0xEE00EE;
+  {
+    this.flag = true;
+    this.mat = new THREE.MeshBasicMaterial({ color: c, wireframe: true });
+  }
 
-  this.mat = new THREE.MeshBasicMaterial({ color: c, wireframe: true });
   this.mesh = new THREE.Mesh(geo, this.mat);
 
   Main.addToScene(this);
@@ -90,7 +100,25 @@ CubeActor.prototype.update = function() {
     return;
 
   this.setScale(Math.abs(a));
-  this.mesh.rotation.x += 0.001 * Util.map(Main.visData[256], 0, 255, 0, 50);
-  this.mesh.rotation.y += 0.01 * Util.map(Main.visData[512 + 128], 0, 255, 0, 75);
-  this.mesh.rotation.z += 0.01 * Util.map(Main.visData[512 + 256], 0, 255, 0, 100);
+
+  var vx = 2;
+  var vy = 8;
+  var vz = 10;
+
+  var r = 1;
+  if (this.flag)
+  {
+    this.mesh.material.color.setHex(Math.random() * 0xFFFFFF);
+    this.mesh.material.opacity = Util.map(Perlin.noise(this.mesh.position.x, Main.camera.position.z), -1, 1, 0, 0.1);
+    r = -1;
+  }
+
+  if (Main.visData[vx] > 200)
+    this.mesh.rotation.x += r * 0.001 * Util.map(Main.visData[vx], 0, 255, 0, 25);
+
+  if (Main.visData[vy] > 150)
+    this.mesh.rotation.y += r * 0.001 * Util.map(Main.visData[vy], 0, 255, 0, 50);
+
+  if (Main.visData[vz] > 150)
+    this.mesh.rotation.z += r * 0.005 * Util.map(Main.visData[vz], 0, 255, 0, 12.5);
 }
