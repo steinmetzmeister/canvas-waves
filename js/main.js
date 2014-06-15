@@ -28,14 +28,19 @@ var Main = {
 
     Main.visData = visualizer.update();
 
-    if (Main.visData[4] > 150)
-      Main.camera.position.z = Math.cos(Main.angle) * 32;
+    var r = 1;
+    var s = Perlin.noise(Main.angle, Main.camera.position.y);
+    if (s < 0)
+      r = -1;
 
-    if (Main.visData[6] > 150)
-      Main.camera.position.y = Math.cos(Main.angle) * 32;
+    if (Main.visData[6] > 175)
+      Main.camera.position.z = r * Math.cos(Main.angle) * Util.map(Main.visData[6], 0, 255, 0, 2);
 
-    if (Main.visData[2] > 150)
-      Main.camera.position.x = Math.sin(Main.angle) * Util.map(Main.visData[2], 0, 255, 0, 32)
+    if (Main.visData[4] > 175)
+      Main.camera.position.y = r * Math.cos(Main.angle) * Util.map(Main.visData[4], 0, 255, 0, 2);
+
+    if (Main.visData[1] > 200)
+      Main.camera.position.x = r * Math.sin(Main.angle) * Util.map(Main.visData[1], 0, 255, 0, 2);
     
     Main.camera.lookAt(new THREE.Vector3(0, 0, 0));
   },
@@ -105,8 +110,8 @@ CubeActor.prototype.update = function() {
   this.setScale(Math.abs(a));
 
   var vx = 2;
-  var vy = 8;
-  var vz = 10;
+  var vy = 7;
+  var vz = 12;
 
   var r = 1;
   if (this.flag)
