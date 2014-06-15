@@ -28,11 +28,14 @@ var Main = {
 
     Main.visData = visualizer.update();
 
-    
-    Main.camera.position.z = Math.cos(Main.angle) * 32;
-    Main.camera.position.y = Math.cos(Main.angle) * 32;
+    if (Main.visData[4] > 150)
+      Main.camera.position.z = Math.cos(Main.angle) * 32;
+
+    if (Main.visData[6] > 150)
+      Main.camera.position.y = Math.cos(Main.angle) * 32;
+
     if (Main.visData[2] > 150)
-      Main.camera.position.x = Math.sin(Main.angle) * Util.map(Main.visData[2], 0, 255, 0, 128)
+      Main.camera.position.x = Math.sin(Main.angle) * Util.map(Main.visData[2], 0, 255, 0, 32)
     
     Main.camera.lookAt(new THREE.Vector3(0, 0, 0));
   },
