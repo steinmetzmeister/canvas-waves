@@ -2,6 +2,7 @@ var Main = {
   actors: [],
 
   angle: 0,
+  visData: null,
 
   init: function(container) {
     this.renderer = new THREE.WebGLRenderer();
@@ -23,11 +24,13 @@ var Main = {
       Main.actors[i].update();
     Main.render();
 
-    Main.angle += 0.001;
-    Main.camera.position.x = Math.sin(Main.angle) * 75;
-    Main.camera.position.y = Math.cos(Main.angle) * 75;
-    Main.camera.position.z = Math.cos(Main.angle) * 75;
+    Main.angle += 0.0025;
+    Main.camera.position.x = Math.sin(Main.angle) * 25;
+    Main.camera.position.y = Math.cos(Main.angle) * 25;
+    Main.camera.position.z = Math.cos(Main.angle) * 25;
     Main.camera.lookAt(new THREE.Vector3(0, 12.5, 0));
+
+    Main.visData = visualizer.update();
   },
 
   render: function() {
@@ -61,7 +64,13 @@ var CubeActor = function() {
   this.mats = [];
 
   var geo = new THREE.BoxGeometry(50, 50, 50);
-  this.mat = new THREE.MeshBasicMaterial({ color: 0x00FF00, wireframe: true });
+
+  if (Math.random() < 0.5)
+    var c = 0x00EE00;
+  else
+    var c = 0xEE00EE;
+
+  this.mat = new THREE.MeshBasicMaterial({ color: c, wireframe: true });
   this.mesh = new THREE.Mesh(geo, this.mat);
 
   Main.addToScene(this);
@@ -69,13 +78,19 @@ var CubeActor = function() {
 CubeActor.prototype = new Actor();
 CubeActor.prototype.constructor = CubeActor;
 CubeActor.prototype.update = function() {
-  var x = Math.abs(this.mesh.position.x) * Main.angle * 0.1;
-  var y = Math.abs(this.mesh.position.y) * Main.angle * 0.1;
-  var z = Math.abs(this.mesh.position.z) * Main.angle * 0.1;
-  var a = noise.perlin3(
-    x * 0.1, 
-    y * 0.1,
-    z * 0.1);
+  var x = Math.abs(Main.camera.position.x + this.mesh.position.x) * 0.1;
+  var y = Math.abs(Main.camera.position.y + this.mesh.position.y) * 0.1;
+  var z = Math.abs(Main.camera.position.z + this.mesh.position.z) * 0.1;
+  var a = Perlin.noise(
+    x * 0.5, 
+    y * 0.5,
+    z * 0.5);
+
+  if (!Main.visData)
+    return;
 
   this.setScale(Math.abs(a));
+  this.mesh.rotation.x += 0.001 * Util.map(Main.visData[256], 0, 255, 0, 50);
+  this.mesh.rotation.y += 0.01 * Util.map(Main.visData[512 + 128], 0, 255, 0, 75);
+  this.mesh.rotation.z += 0.01 * Util.map(Main.visData[512 + 256], 0, 255, 0, 100);
 }

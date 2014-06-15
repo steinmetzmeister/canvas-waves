@@ -6,12 +6,19 @@ body {
 </style>
 
 <div id="container"></div>
+<audio id="audio" style="display: none;" autoplay>
+    <source src="http://uwstream1.somafm.com:80/;" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
 
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r67/three.min.js"></script>
 <script type="text/javascript" src="./js/main.js"></script>
 <script type="text/javascript" src="./js/util.js"></script>
 <script type="text/javascript" src="./js/perlin.js"></script>
+<script type="text/javascript" src="./js/visualizer.js"></script>
 <script type="text/javascript">
+var visualizer = new Visualizer('audio');
+
 Main.init('container');
 
 var blocks = [];
@@ -26,9 +33,6 @@ for (var i = 0; i < totalBlocks; i++)
             var offset = (totalBlocks * 25) / 2;
             var block = new CubeActor();
             block.setPosition(i * 25 - offset, j * 25 - offset, k * 25 - offset);
-
-            var n = Util.map(noise.simplex3(i * 10, j * 10, k * 10), -1, 1, 0, 0.5);
-            block.setScale(n);
 
             blocks.push(block);
         }
