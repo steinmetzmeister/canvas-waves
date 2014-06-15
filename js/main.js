@@ -11,10 +11,11 @@ var Main = {
     console.log(container);
     document.getElementById(container).appendChild(this.renderer.domElement);
 
-    this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 100);
+    this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
     this.scene = new THREE.Scene();
 
     this.camera.position.z = 500;
+    this.camera.rotation.z = 45;
   },
 
   animate: function() {
@@ -23,10 +24,10 @@ var Main = {
       Main.actors[i].update();
     Main.render();
 
-    Main.angle += 0.0025;
-    Main.camera.position.x = Math.sin(Main.angle) * 125;
-    Main.camera.position.y = 12.5;
-    Main.camera.position.z = Math.cos(Main.angle) * 125;
+    Main.angle += 0.001;
+    Main.camera.position.x = Math.sin(Main.angle) * 75;
+    Main.camera.position.y = Math.cos(Main.angle) * 75;
+    Main.camera.position.z = Math.cos(Main.angle) * 75;
     Main.camera.lookAt(new THREE.Vector3(0, 12.5, 0));
   },
 
@@ -61,21 +62,19 @@ var CubeActor = function() {
   this.mats = [];
 
   var geo = new THREE.BoxGeometry(50, 50, 50);
-  this.mats.push(new THREE.MeshDepthMaterial({ wireframe: true }));
-  this.mats.push(new THREE.MeshBasicMaterial({
-    color: 0x00FF00, 
-    transparent: true, 
-    blending: THREE.MultiplyBlending,
-    wireframe: true
-  }));
-  this.mesh = new THREE.SceneUtils.createMultiMaterialObject(geo, this.mats);
+  this.mat = new THREE.MeshBasicMaterial({ color: 0x00FF00, transparent: true, opacity: 0.5 });
+  this.mesh = new THREE.Mesh(geo, this.mat);
 
   Main.addToScene(this);
 }
 CubeActor.prototype = new Actor();
 CubeActor.prototype.constructor = CubeActor;
 CubeActor.prototype.update = function() {
-  var x = Main.camera.position.x * 0.01;
-  var z = Main.camera.position.z * 0.01;
-  this.setScale(Math.abs(noise.perlin2(x, this.mesh.position.z)));
+  var x = Math.abs(Main.camera.position.x) * 0.05;
+  var a = noise.perlin3(
+    this.mesh.position.x * 0.01 + x, 
+    this.mesh.position.y * 0.01 + x, 
+    this.mesh.position.z * 0.01 + x);
+
+  this.setScale(Math.abs(a));
 }
