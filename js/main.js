@@ -26,7 +26,7 @@ var Main = {
     for (var i = 0; i < Main.actors.length; i++)
       Main.actors[i].update(i);
 
-    Main.camera.position.y = Math.sin(Main.angle * 0.1) * 256;
+    // Main.camera.position.y = Math.sin(Main.angle * 0.1) * 256;
     Main.camera.position.z = Math.sin(Main.angle) * 64;
     if (Main.camera.position.z > 32)
       Main.camera.position.z = 32;
@@ -81,6 +81,14 @@ CubeActor.prototype.update = function(i) {
     this.mesh.material.color.setHex(0x0000FF);
 
     this.mesh.position.y = Math.cos(Main.angle + i) * n;
+  }
+  else if (i % 3 == 0)
+  {
+    var m = 384;
+    var n = Util.map(Main.visData[10], 0, 255, 0, 256);
+    this.mesh.material.color.setHex(0x00FF00);
+
+    this.mesh.position.y = Math.sin(Main.angle + i) * n - 256;
   }
   else
   {
