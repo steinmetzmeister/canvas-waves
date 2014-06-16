@@ -14,7 +14,8 @@ var Main = {
     this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
     this.scene = new THREE.Scene();
 
-    this.camera.position.y = 256;
+    this.camera.position.x = 256;
+    this.camera.position.y = 0;
   },
 
   animate: function() {
@@ -26,8 +27,8 @@ var Main = {
     for (var i = 0; i < Main.actors.length; i++)
       Main.actors[i].update(i);
 
-    // Main.camera.position.y = Math.sin(Main.angle * 0.1) * 256;
-    Main.camera.position.z = Math.sin(Main.angle) * 64;
+    Main.camera.position.x = Math.cos(Main.angle * Util.map(Main.visData[3], 0, 255, -0.05, 0.05)) * 256;
+    Main.camera.position.z = Math.sin(Main.angle * Util.map(Main.visData[9], 0, 255, -0.05, 0.05)) * 256;
     if (Main.camera.position.z > 32)
       Main.camera.position.z = 32;
 
@@ -77,7 +78,7 @@ CubeActor.prototype.update = function(i) {
   if (i % 2 == 0)
   {
     var m = 128;
-    var n = Util.map(Main.visData[8], 0, 255, -128, 128);
+    var n = Util.map(Main.visData[12], 0, 255, -128, 128);
     this.mesh.material.color.setHex(0x0000FF);
 
     this.mesh.position.y = Math.cos(Main.angle + i) * n;
@@ -85,14 +86,14 @@ CubeActor.prototype.update = function(i) {
   else if (i % 3 == 0)
   {
     var m = 384;
-    var n = Util.map(Main.visData[10], 0, 255, 0, 256);
+    var n = Util.map(Main.visData[4], 0, 255, 0, 256);
     this.mesh.material.color.setHex(0x00FF00);
 
-    this.mesh.position.y = Math.sin(Main.angle + i) * n - 256;
+    this.mesh.position.y = Math.sin(Main.angle + i) * n;
   }
   else
   {
-    var m = Util.map(Main.visData[12], 0, 255, 0, 256);
+    var m = Util.map(Main.visData[8], 0, 255, 0, 128);
     this.mesh.material.color.setRGB(Main.visData[12], 0, 0);
   }
 
