@@ -5,9 +5,16 @@ var Visualizer = function(el) {
   this.analyser = this.context.createAnalyser();
 
   this.source = this.context.createMediaElementSource(this.element);
-  this.source.connect(this.analyser);
 
-  this.analyser.connect(this.context.destination);
+  this.gainNode = this.context.createGain();
+
+  this.source.connect(this.gainNode);
+  this.source.connect(this.context.destination);
+  
+  this.source.connect(this.gainNode);
+  this.gainNode.connect(this.analyser);
+
+  this.gainNode.gain.value = 0.1;
 
   this.data = new Uint8Array(this.analyser.frequencyBinCount);
 }

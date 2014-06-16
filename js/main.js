@@ -71,14 +71,18 @@ CubeActor.prototype.constructor = CubeActor;
 CubeActor.prototype.update = function(i) {
   if (i % 2 == 0)
   {
-    var m = Util.map(Main.visData[8], 0, 255, 64, 256);
+    var m = 128;
+    var n = Util.map(Main.visData[12], 0, 255, -32, 32);
+    this.mesh.material.color.setHex(0x0000FF);
+
+    this.mesh.position.y = Math.cos(Main.angle + i) * n;
   }
   else
   {
-    var m = Util.map(Main.visData[12], 0, 255, 32, 176);
-    this.mesh.material.color.setHex(Math.random() * 0xFFFFFF);
+    var m = Util.map(Main.visData[12], 0, 255, 0, 256);
+    this.mesh.material.color.setRGB(Main.visData[12], 0, 0);
   }
 
-  this.mesh.position.x = Math.sin(Main.angle + i / 8) * m;
-  this.mesh.position.z = Math.cos(Main.angle + i / 8) * m;
+  this.mesh.position.x = Math.sin(Main.angle + i / 16) * m;
+  this.mesh.position.z = Math.cos(Main.angle + i / 16) * m;
 }
