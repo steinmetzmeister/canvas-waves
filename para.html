@@ -1,0 +1,43 @@
+<style>
+body {
+  padding: 0px;
+  margin: 0px;
+}
+</style>
+
+<div id="container"></div>
+<audio id="audio" style="display: none;" autoplay>
+    <source src="http://uwstream2.somafm.com:7770/;" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+<script type="text/javascript" src="./js/three.min.js"></script>
+<script type="text/javascript" src="./js/main.js"></script>
+<script type="text/javascript" src="./js/util.js"></script>
+<script type="text/javascript" src="./js/perlin.js"></script>
+<script type="text/javascript" src="./js/visualizer.js"></script>
+<script type="text/javascript">
+var visualizer = new Visualizer('audio');
+visualizer.setFft(32);
+
+Main.init('container');
+
+var a = new THREE.Vector3(0, 1, 0);
+var b = new THREE.Vector3(0, -1, 0);
+
+var intercept = a.sub(b);
+console.log(intercept);
+
+var len = 200;
+for (var i = (len / 2) * -1; i < len / 2; i++)
+{
+    var v = new THREE.Vector3(0, 0, 0);
+    v.subVectors(a, b).multiplyScalar(i);
+    v.add(a);
+
+    var cube = new CubeActor();
+    cube.setPosition(v.x, v.y / 2, v.z);
+}
+
+Main.animate();
+</script>
