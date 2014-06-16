@@ -14,7 +14,7 @@ var Visualizer = function(el) {
   this.source.connect(this.gainNode);
   this.gainNode.connect(this.analyser);
 
-  this.gainNode.gain.value = 0.1;
+  this.gainNode.gain.value = 0.75;
 
   this.data = new Uint8Array(this.analyser.frequencyBinCount);
 }

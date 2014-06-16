@@ -14,7 +14,7 @@ var Main = {
     this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
     this.scene = new THREE.Scene();
 
-    this.camera.position.z = 256;
+    this.camera.position.y = 256;
   },
 
   animate: function() {
@@ -25,6 +25,11 @@ var Main = {
 
     for (var i = 0; i < Main.actors.length; i++)
       Main.actors[i].update(i);
+
+    Main.camera.position.y = Math.sin(Main.angle * 0.1) * 256;
+    Main.camera.position.z = Math.sin(Main.angle) * 64;
+    if (Main.camera.position.z > 32)
+      Main.camera.position.z = 32;
 
     Main.camera.lookAt(new THREE.Vector3(0, 0, 0));
     Main.render();
@@ -72,7 +77,7 @@ CubeActor.prototype.update = function(i) {
   if (i % 2 == 0)
   {
     var m = 128;
-    var n = Util.map(Main.visData[12], 0, 255, -32, 32);
+    var n = Util.map(Main.visData[8], 0, 255, -128, 128);
     this.mesh.material.color.setHex(0x0000FF);
 
     this.mesh.position.y = Math.cos(Main.angle + i) * n;
