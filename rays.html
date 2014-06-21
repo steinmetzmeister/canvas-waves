@@ -57,14 +57,14 @@ var Main = {
   },
 
   update: function() {
-    yellowBox.position.z = (Math.sin(this.angle * 2) * 25) - 50;
-    yellowBox.position.y = (Math.sin(this.angle * 2) * 50) - 50;
+    yellowBox.position.z = (Math.sin(this.angle * 4) * 25) - 50;
+    yellowBox.position.y = (Math.sin(this.angle * 8) * 50) - 50;
 
     var clone = redBox.position.clone();
     greenBox.localToWorld(clone);
 
-    greenBox.position.y -= 0.5;
-    greenBox.position.z = Math.sin(this.angle) * 16;
+    greenBox.position.y -= 1;
+    greenBox.position.z = Math.sin(this.angle) * 14;
     blueBox.rotation.z += 0.05;
 
     var raycaster = new THREE.Raycaster(clone, new THREE.Vector3(0, -1, 0).normalize(), 0, 12.5);
