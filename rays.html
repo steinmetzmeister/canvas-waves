@@ -1,0 +1,143 @@
+<style>
+body {
+  padding: 0px;
+  margin: 0px;
+}
+</style>
+
+<div id="container"></div>
+<audio id="audio" style="display: none;">
+    <source src="http://xstream1.somafm.com:8062/;" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+<script type="text/javascript" src="./js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="./js/three.min.js"></script>
+<script type="text/javascript" src="./js/util.js"></script>
+<script type="text/javascript" src="./js/perlin.js"></script>
+<script type="text/javascript" src="./js/visualizer.js"></script>
+<script type="text/javascript" src="./js/controller.js"></script>
+
+<script type="text/javascript">
+var Main = {
+  angle: 0,
+
+  init: function(container) {
+    this.renderer = new THREE.WebGLRenderer();
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+    document.getElementById(container).appendChild(this.renderer.domElement);
+
+    this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
+    this.scene = new THREE.Scene();
+
+    Main.camera.position.x = Math.sin(90) * 128;
+    Main.camera.position.z = Math.cos(90) * 128;
+
+    this.camera.position.y = -64;
+  },
+
+  animate: function() {
+    requestAnimationFrame(Main.animate);
+
+    Main.angle += 0.01;
+
+    Main.update();
+    Main.camera.position.x = Math.sin(Main.angle * 0.25) * 128;
+    Main.camera.position.z = Math.cos(Main.angle * 0.25) * 128;
+
+    // greenBox.position.y = Math.sin(Main.angle) * 25;
+
+    Main.camera.lookAt(new THREE.Vector3(0, -64, 0));
+    Main.render();
+  },
+
+  render: function() {
+    this.renderer.render(this.scene, this.camera);
+  },
+
+  update: function() {
+    yellowBox.position.z = (Math.sin(this.angle * 2) * 25) - 50;
+    yellowBox.position.y = (Math.sin(this.angle * 2) * 50) - 50;
+
+    var clone = redBox.position.clone();
+    greenBox.localToWorld(clone);
+
+    greenBox.position.y -= 0.5;
+    greenBox.position.z = Math.sin(this.angle) * 16;
+    blueBox.rotation.z += 0.05;
+
+    var raycaster = new THREE.Raycaster(clone, new THREE.Vector3(0, -1, 0).normalize(), 0, 12.5);
+    var intersect = raycaster.intersectObject(yellowBox);
+
+    var redPoint = redBox.position.clone();
+    greenBox.localToWorld(redPoint);
+
+    if (intersect.length > 0 && intersect[0].distance > 1) {
+      var interPoint = intersect[0].point.clone();
+
+      line.geometry.vertices[0] = clone.clone();
+      line.geometry.vertices[1] = interPoint.clone();
+
+      line.geometry.verticesNeedUpdate = true;
+
+      redDebug.position = interPoint.clone();
+      greenBox.position.y += 12.5 - intersect[0].distance;
+    }
+  }
+}
+
+Main.init('container');
+
+var yellow = new THREE.MeshBasicMaterial({ color: 0xFFFF00, wireframe: true });
+var yellowBox = new THREE.Mesh(new THREE.BoxGeometry(25, 10, 100), yellow);
+// var yellowBoxA = new THREE.Mesh(new THREE.BoxGeometry(25, 25, 25), yellow);
+// var yellowBoxB = new THREE.Mesh(new THREE.BoxGeometry(25, 15, 50), yellow);
+
+yellowBox.rotation.x = Math.PI / 8;
+
+// yellowBox.add(yellowBoxA);
+// yellowBox.add(yellowBoxB);
+
+yellowBox.position.y -= 100;
+yellowBox.position.z += -50;
+
+Main.scene.add(yellowBox);
+
+var red = new THREE.MeshBasicMaterial({ color: 0xFF0000, wireframe: true });
+var green = new THREE.MeshBasicMaterial({ color: 0x00FF00, wireframe: true })
+var blue = new THREE.MeshBasicMaterial({ color: 0x0000FF, wireframe: true });
+
+var redBox = new THREE.Mesh(new THREE.CylinderGeometry(12.5, 12.5, 10, 16), red);
+var greenBox = new THREE.Mesh(new THREE.BoxGeometry(25, 25, 25), green);
+var blueBox = new THREE.Mesh(new THREE.BoxGeometry(25, 25, 25), blue);
+
+var redDebug = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), red);
+Main.scene.add(redDebug);
+
+greenBox.rotation.x = Math.PI / 4;
+
+greenBox.add(redBox);
+greenBox.add(blueBox);
+
+redBox.position.z += -50;
+redBox.rotation.z += Math.PI / 2;
+blueBox.position.z += 50;
+
+greenBox.position.y += 10;
+
+Main.scene.add(greenBox);
+
+var material = new THREE.LineBasicMaterial({ color: 0xFFFFFF });
+
+var geometry = new THREE.Geometry();
+geometry.vertices.push(new THREE.Vector3(-10, 0, 0));
+geometry.vertices.push(new THREE.Vector3(0, 10, 0));
+
+var line = new THREE.Line(geometry, material);
+
+Main.scene.add(line);
+
+Main.animate();
+</script>
+</script>
