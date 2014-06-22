@@ -21,6 +21,7 @@ body {
 <script type="text/javascript">
 var Main = {
   angle: 0,
+  angularVelocity: 0,
 
   init: function(container) {
     this.renderer = new THREE.WebGLRenderer();
@@ -35,6 +36,9 @@ var Main = {
     Main.camera.position.z = Math.cos(90) * 128;
 
     this.camera.position.y = -64;
+
+    this.rPrevDist = 0;
+    this.bPrevDist = 0;
   },
 
   animate: function() {
@@ -57,23 +61,50 @@ var Main = {
   },
 
   update: function() {
+
+    greenBox.position.y -= 2;
+
     yellowBox.position.z = (Math.sin(this.angle * 4) * 25) - 50;
-    yellowBox.position.y = (Math.sin(this.angle * 8) * 50) - 50;
+    yellowBox.position.y = (Math.sin(this.angle * 4) * 50) - 50;
+
+    //
 
     var clone = redBox.position.clone();
     greenBox.localToWorld(clone);
 
-    greenBox.position.y -= 1;
-    greenBox.position.z = Math.sin(this.angle) * 14;
-    blueBox.rotation.z += 0.05;
+    var raycaster = new THREE.Raycaster(clone, new THREE.Vector3(0, -1, 0).normalize(), 1, 12.5);
+    var intersect = raycaster.intersectObjects([yellowBox, yellowBoxB]);
 
-    var raycaster = new THREE.Raycaster(clone, new THREE.Vector3(0, -1, 0).normalize(), 0, 12.5);
-    var intersect = raycaster.intersectObject(yellowBox);
+    //
+
+    var cloneB = blueBox.position.clone();
+    greenBox.localToWorld(cloneB);
+
+    var raycasterB = new THREE.Raycaster(cloneB, new THREE.Vector3(0, -1, 0).normalize(), 1, 12.5);
+    var intersectB = raycasterB.intersectObjects([yellowBox, yellowBoxB]);
 
     var redPoint = redBox.position.clone();
     greenBox.localToWorld(redPoint);
 
-    if (intersect.length > 0 && intersect[0].distance > 1) {
+    //
+
+    if (intersect.length > 0 && intersectB.length > 0)
+    {
+      Main.angularVelocity = 0;
+    }
+    else
+    {
+      if (intersect.length == 0 & intersectB.length != 0)
+        Main.angularVelocity -= 0.1;
+
+      if (intersect.length != 0 & intersectB.length == 0)
+        Main.angularVelocity += 0.1;
+    }
+
+    greenBox.rotation.x += Main.angularVelocity * (Math.PI / 180);
+    //
+
+    if (intersect.length > 0) {
       var interPoint = intersect[0].point.clone();
 
       line.geometry.vertices[0] = clone.clone();
@@ -82,7 +113,27 @@ var Main = {
       line.geometry.verticesNeedUpdate = true;
 
       redDebug.position = interPoint.clone();
-      greenBox.position.y += 12.5 - intersect[0].distance;
+
+      if (Math.abs(intersect[0].distance))
+        greenBox.position.y += 12.5 - intersect[0].distance;
+    }
+
+    redPoint = redBox.position.clone();
+    greenBox.localToWorld(redPoint);
+
+    if (intersectB.length > 0) {
+      var interPoint = intersectB[0].point.clone();
+
+      line.geometry.vertices[0] = cloneB.clone();
+      line.geometry.vertices[1] = interPoint.clone();
+
+      line.geometry.verticesNeedUpdate = true;
+
+      redDebug.position = interPoint.clone();
+
+      if (Math.abs(intersectB[0].distance))
+        greenBox.position.y += 12.5 - intersectB[0].distance;
+
     }
   }
 }
@@ -91,6 +142,8 @@ Main.init('container');
 
 var yellow = new THREE.MeshBasicMaterial({ color: 0xFFFF00, wireframe: true });
 var yellowBox = new THREE.Mesh(new THREE.BoxGeometry(25, 10, 100), yellow);
+var yellowBoxB = new THREE.Mesh(new THREE.BoxGeometry(25, 10, 100), yellow);
+
 // var yellowBoxA = new THREE.Mesh(new THREE.BoxGeometry(25, 25, 25), yellow);
 // var yellowBoxB = new THREE.Mesh(new THREE.BoxGeometry(25, 15, 50), yellow);
 
@@ -102,7 +155,11 @@ yellowBox.rotation.x = Math.PI / 8;
 yellowBox.position.y -= 100;
 yellowBox.position.z += -50;
 
+yellowBoxB.position.y -= 100;
+yellowBoxB.position.z += 50;
+
 Main.scene.add(yellowBox);
+Main.scene.add(yellowBoxB);
 
 var red = new THREE.MeshBasicMaterial({ color: 0xFF0000, wireframe: true });
 var green = new THREE.MeshBasicMaterial({ color: 0x00FF00, wireframe: true })
@@ -110,7 +167,7 @@ var blue = new THREE.MeshBasicMaterial({ color: 0x0000FF, wireframe: true });
 
 var redBox = new THREE.Mesh(new THREE.CylinderGeometry(12.5, 12.5, 10, 16), red);
 var greenBox = new THREE.Mesh(new THREE.BoxGeometry(25, 25, 25), green);
-var blueBox = new THREE.Mesh(new THREE.BoxGeometry(25, 25, 25), blue);
+var blueBox = new THREE.Mesh(new THREE.CylinderGeometry(12.5, 12.5, 10, 16), blue);
 
 var redDebug = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), red);
 Main.scene.add(redDebug);
@@ -123,6 +180,7 @@ greenBox.add(blueBox);
 redBox.position.z += -50;
 redBox.rotation.z += Math.PI / 2;
 blueBox.position.z += 50;
+blueBox.rotation.z += Math.PI / 2;
 
 greenBox.position.y += 10;
 
